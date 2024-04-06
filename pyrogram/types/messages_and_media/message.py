@@ -3968,10 +3968,12 @@ class Message(Object, Update):
         Raises:
             RPCError: In case of a Telegram RPC error.
         """
+
         return await self._client.edit_message_text(
             chat_id=self.chat.id,
             message_id=self.id,
             text=text,
+            business_connection_id=self.business_connection_id,
             parse_mode=parse_mode,
             entities=entities,
             disable_web_page_preview=disable_web_page_preview,
@@ -4028,6 +4030,7 @@ class Message(Object, Update):
             chat_id=self.chat.id,
             message_id=self.id,
             caption=caption,
+            business_connection_id=self.business_connection_id,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
             reply_markup=reply_markup
