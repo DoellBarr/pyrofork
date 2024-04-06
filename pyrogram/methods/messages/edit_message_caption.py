@@ -29,6 +29,7 @@ class EditMessageCaption:
         chat_id: Union[int, str],
         message_id: int,
         caption: str,
+        business_connection_id: str = None,
         parse_mode: Optional["enums.ParseMode"] = None,
         caption_entities: List["types.MessageEntity"] = None,
         reply_markup: "types.InlineKeyboardMarkup" = None
@@ -49,6 +50,10 @@ class EditMessageCaption:
 
             caption (``str``):
                 New caption of the media message.
+
+            business_connection_id (``str``, *optional*):
+                Business connection identifier.
+                for business bots only.
 
             parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
                 By default, texts are parsed using both Markdown and HTML styles.
@@ -72,6 +77,7 @@ class EditMessageCaption:
             chat_id=chat_id,
             message_id=message_id,
             text=caption,
+            business_connection_id=business_connection_id,
             parse_mode=parse_mode,
             entities=caption_entities,
             reply_markup=reply_markup

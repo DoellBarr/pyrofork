@@ -31,6 +31,7 @@ class EditMessageText:
         chat_id: Union[int, str],
         message_id: int,
         text: str,
+        business_connection_id: str = None,
         parse_mode: Optional["enums.ParseMode"] = None,
         entities: List["types.MessageEntity"] = None,
         disable_web_page_preview: bool = None,
@@ -52,6 +53,10 @@ class EditMessageText:
 
             text (``str``):
                 New text of the message.
+
+            business_connection_id (``str``, *optional*):
+                Business connection identifier.
+                for business bots only.
 
             parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
                 By default, texts are parsed using both Markdown and HTML styles.
@@ -81,15 +86,22 @@ class EditMessageText:
                     disable_web_page_preview=True)
         """
 
-        r = await self.invoke(
-            raw.functions.messages.EditMessage(
-                peer=await self.resolve_peer(chat_id),
-                id=message_id,
-                no_webpage=disable_web_page_preview or None,
-                reply_markup=await reply_markup.write(self) if reply_markup else None,
-                **await utils.parse_text_entities(self, text, parse_mode, entities)
-            )
+        rpc = raw.functions.messages.EditMessage(
+            peer=await self.resolve_peer(chat_id),
+            id=message_id,
+            no_webpage=disable_web_page_preview or None,
+            reply_markup=await reply_markup.write(self) if reply_markup else None,
+            **await utils.parse_text_entities(self, text, parse_mode, entities)
         )
+        if business_connection_id:
+            r = await self.invoke(
+                raw.functions.InvokeWithBusinessConnection(
+                    connection_id=business_connection_id,
+                    query=rpc
+                )
+            )
+        else:
+            r = await self.invoke(rpc)
 
         for i in r.updates:
             if isinstance(i, (raw.types.UpdateEditMessage, raw.types.UpdateEditChannelMessage)):
