@@ -424,7 +424,8 @@ class Chat(Object):
             parsed_chat.bio = full_user.about
             parsed_chat.folder_id = getattr(full_user, "folder_id", None)
             parsed_chat.business_info = types.BusinessInfo._parse(client, full_user, users)
-            parsed_chat.birthday = types.Birthday._parse(getattr(full_user, "birthday", None))
+            birthday = getattr(full_user, "birthday", None)
+            parsed_chat.birthday = types.Birthday._parse(birthday) if birthday is not None else None
             personal_chat = await client.invoke(
                 raw.functions.channels.GetChannels(
                     id=[await client.resolve_peer(utils.get_channel_id(full_user.personal_channel_id))]
